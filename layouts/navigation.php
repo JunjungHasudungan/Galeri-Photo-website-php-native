@@ -18,34 +18,6 @@ if (session_status() === PHP_SESSION_NONE) {
     $userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Guest';
     $userRole = isset($_SESSION['user_role']) ? $_SESSION['user_role'] : 'user'; 
 ?>
-    <!-- <nav class="navbar">
-        <ul class="nav-menu">
-            <?php if (!$isLoggedIn): ?>
-                <li><a href="/belajar-web-native/auth/login.php" class="btn-login">Login</a></li>
-                <li><a href="/belajar-web-native/auth/register.php" class="btn-register">Register</a></li>
-            <?php else: ?>
-                <li><a href="dashboard.php">Dashboard</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <div id="app">
-                    <li class="dropdown" @click="toggleDropdown">
-                        <a href="#" class="dropdown-toggle" id="userDropdown">
-                            {{ userName }} <span>&#9662;</span>
-                        </a>
-                        <ul :class="{'dropdown-menu': true, 'show': isDropdownVisible}" id="dropdownMenu">
-                            <li><a href="profile.php">Profile</a></li>
-                            <li>
-                                <form id="logout-form" action="/belajar-web-native/auth/logout.php" method="post" style="display: none;">
-                                </form>
-                                <a href="#" class="btn-logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </div>
-            <?php endif; ?>
-        </ul>
-    </nav> -->
 
     <nav class="navbar">
         <ul class="nav-menu">
@@ -54,7 +26,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li><a href="/belajar-web-native/auth/register.php" class="btn-register">Register</a></li>
             <?php else: ?>
                 <?php if ($userRole == 'admin'): ?>
-                    <li><a href="/belajar-web-native/views/admim/dashboard.php">Galeri Photo Admin</a></li>
+                    <li><a href="/belajar-web-native/views/admin/dashboard.php">Dashbord Admin</a></li>
+                    <li>
+                        <a href="/belajar-web-native/views/admin/galeri-photo/list-galeri-photo/list-galeri.php">
+                            Galeri Photo
+                        </a>
+                    </li>
                 <?php else: ?>
                     <li><a href="/belajar-web-native/views/users/dashboard.php">Dashboard User</a></li>
                 <?php endif; ?>

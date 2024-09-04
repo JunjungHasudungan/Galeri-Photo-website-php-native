@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 return [
     'db_host'       => 'localhost',
     'db_name'       => 'example-demo-galeri-photo-native',
