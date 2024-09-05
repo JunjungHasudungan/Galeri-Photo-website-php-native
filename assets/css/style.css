@@ -277,7 +277,7 @@ button:hover {
 }
 
 .dropdown-menu li {
-    padding: 8px 12px;
+    padding: 8px;
 }
 
 .dropdown-menu a {
@@ -299,82 +299,3 @@ button:hover {
 .btn-login:hover, .btn-register:hover, .btn-logout:hover {
     background-color: #0056b3;
 }
-
-
-/* 
-.navbar {
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-}
-
-.nav-menu {
-    list-style: none;
-    display: flex;
-    gap: 10px;
-}
-
-.nav-menu li {
-    display: inline-block;
-}
-
-.nav-menu a {
-    text-decoration: none;
-    color: #333;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background 0.3s;
-}
-
-.nav-menu a:hover {
-    background-color: #f0f0f0;
-}
-
-.dropdown {
-    position: relative;
-    cursor: pointer;
-}
-
-.dropdown-toggle {
-    color: #333;
-}
-
-.dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.dropdown-menu.show {
-    display: block;
-}
-
-.dropdown-menu li {
-    padding: 8px 12px;
-}
-
-.dropdown-menu a {
-    display: block;
-    color: #333;
-    text-decoration: none;
-}
-
-.btn-login, .btn-register, .btn-logout {
-    border: 1px solid #007bff;
-    background-color: #007bff;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 4px;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.btn-login:hover, .btn-register:hover, .btn-logout:hover {
-    background-color: #0056b3;
-} */

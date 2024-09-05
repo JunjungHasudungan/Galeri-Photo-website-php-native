@@ -26,14 +26,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li><a href="/belajar-web-native/auth/register.php" class="btn-register">Register</a></li>
             <?php else: ?>
                 <?php if ($userRole == 'admin'): ?>
-                    <li><a href="/belajar-web-native/views/admin/dashboard.php">Dashbord Admin</a></li>
-                    <li>
-                        <a href="/belajar-web-native/views/admin/galeri-photo/list-galeri-photo/list-galeri.php">
-                            Galeri Photo
-                        </a>
+                    <li><a href="/belajar-web-native/views/admin/dashboard.php"> Dashbord Admin</a></li>
+                    <li><a href="/belajar-web-native/views/admin/index-galeri.php"> Galeri Photo </a>
                     </li>
                 <?php else: ?>
                     <li><a href="/belajar-web-native/views/users/dashboard.php">Dashboard User</a></li>
+                    <li><a href="/belajar-web-native/views/users/like-galeri.php">Likes Galeri</a></li>
                 <?php endif; ?>
                 <div id="app">
                     <li class="dropdown" @click="toggleDropdown">

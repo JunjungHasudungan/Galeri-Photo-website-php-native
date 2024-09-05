@@ -61,23 +61,23 @@ $(document).ready(function() {
     });
     
     // Fungsi untuk memuat konten halaman tanpa reload
-function loadPage(url) {
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function (data) {
-            // Mengganti konten utama halaman (misalnya, bagian dengan id #main-content)
-            $('#main-content').html(data); // Pastikan elemen ini ada di halaman Anda
-            
-            // Perbarui URL tanpa reload halaman
-            history.pushState(null, '', url);
-        },
-        error: function (xhr, status, error) {
-            console.error('Error loading page:', error);
-            alert('Gagal memuat halaman.');
-        }
-    });
-}
+    function loadPage(url) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (data) {
+                // Mengganti konten utama halaman (misalnya, bagian dengan id #main-content)
+                $('#main-content').html(data); // Pastikan elemen ini ada di halaman Anda
+                
+                // Perbarui URL tanpa reload halaman
+                history.pushState(null, '', url);
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading page:', error);
+                alert('Gagal memuat halaman.');
+            }
+        });
+    }
     
 
     $('#registerForm').on('submit', function(event) {
@@ -133,35 +133,13 @@ function loadPage(url) {
                 if (response.success) {
                     $('#registerForm')[0].reset();
                     window.location.href = 'views/users/dashboard.php';
-                } else {
-                    if (response.errors) {
-                        if (response.errors.username) {
-                            $('#usernameError').text(response.errors.username);
-                        }
-                        if (response.errors.email) {
-                            $('#emailError').text(response.errors.email);
-                        }
-                        if (response.errors.password) {
-                            $('#passwordError').text(response.errors.password);
-                        }
-                        if (response.errors.confirmPassword) {
-                            $('#confirmPasswordError').text(response.errors.confirmPassword);
-                        }
-                    } else {
-                        console.error('Unexpected response format:', response);
-                    }
-                }
+                } 
+                console.log('dibagian success')
             },
-            error: function(xhr, status, error) {
-                console.error('Error:', error);
-                console.log('Status:', status);
-                console.log('XHR:', xhr);
+            error: function(response) {
             }
         });
     });
-
-    // Debugging untuk dropdown
-    console.log('Dropdown script running'); // Memastikan bagian ini berjalan
 
     $('#userDropdown').on('click', function(event) {
         console.log('Dropdown clicked'); // Cek apakah tombol diklik
