@@ -63,11 +63,17 @@ if ($user && password_verify($password, $user['password'])) {
 } else {
     // Jika email atau password salah
     http_response_code(400);
+    if (!$user) {
+        $errors['email'] = 'Invalid email';
+    }else {
+        $errors['password'] = 'Invalid password'; 
+    }
+
     echo json_encode(
         [
             'success' => false, 
-            'errors' =>  'Invalid passord or email'
+            'errors' =>  $errors
         ]);
-        // exit;
+        exit;
 }
 ?>

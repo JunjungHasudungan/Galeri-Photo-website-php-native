@@ -33,8 +33,6 @@ $(document).ready(function() {
             return; // Hentikan proses jika ada error
         }
     
-        console.log(email, password)
-    
         // Mengirim data ke login_process.php dengan AJAX
         $.ajax({
             url: '/belajar-web-native/auth/login_process.php',
@@ -49,17 +47,15 @@ $(document).ready(function() {
                         window.location.href = '/belajar-web-native/views/users/dashboard.php'; // Ganti sesuai dengan halaman user
                     }
 
-                } else {
-                    // Tampilkan pesan error dari server
-                    if (response.errors) {
-                        $('#emailError').text(response.errors);
-                        $('#passwordError').text(response.errors.password);
-                    }
-                }
+                } 
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error:', textStatus, errorThrown);
-                alert('Terjadi kesalahan. Silakan coba lagi.');
+            error: function (response) {
+                if (response.responseJSON.errors.email) {
+                    $('#emailError').text(response.responseJSON.errors.email);
+                }
+                if (response.responseJSON.errors.password) {
+                    $('#passwordError').text(response.responseJSON.errors.password);
+                }
             }
         });
     });
