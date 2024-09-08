@@ -1,4 +1,9 @@
 <?php
+    session_start();
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: /belajar-web-native');
+        exit();
+    }
     $config = include '../../config/app.php';
     $appName = $config['app_name'];
     $pageTitle = 'User-Dashboard';

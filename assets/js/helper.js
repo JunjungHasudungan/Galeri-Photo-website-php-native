@@ -40,14 +40,13 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ email: email, password: password }),
             success: function (response) {
-                if (response) {
+                if (response.success == true) {
                     if (response.role === 'admin') {
                         window.location.href = '/belajar-web-native/views/admin/dashboard.php'; // Ganti sesuai dengan halaman admin
                     } else {
                         window.location.href = '/belajar-web-native/views/users/dashboard.php'; // Ganti sesuai dengan halaman user
                     }
-
-                } 
+                }
             },
             error: function (response) {
                 if (response.responseJSON.errors.email) {
@@ -72,10 +71,6 @@ $(document).ready(function() {
                 // Perbarui URL tanpa reload halaman
                 history.pushState(null, '', url);
             },
-            error: function (xhr, status, error) {
-                console.error('Error loading page:', error);
-                alert('Gagal memuat halaman.');
-            }
         });
     }
     
@@ -128,18 +123,16 @@ $(document).ready(function() {
             contentType: 'application/json',
             data: JSON.stringify({ username, email, password, confirmPassword }),
             success: function(response) {
-                console.log('AJAX Response:', response);
-
-                if (response.success) {
+                if (response.success == true) {
                     $('#registerForm')[0].reset();
                     window.location.href = 'views/users/dashboard.php';
                 } 
-                console.log('dibagian success')
+                $('#emailError').text(response.errors);
             },
-            error: function(response) {
-            }
         });
     });
+
+    
 
     $('#userDropdown').on('click', function(event) {
         console.log('Dropdown clicked'); // Cek apakah tombol diklik

@@ -48,8 +48,8 @@ if ($stmtCheckEmail->rowCount() > 0) {
 
 // Jika ada error, kirimkan respons error
 if (!empty($errors)) {
-    http_response_code(400); // Bad Request
     echo json_encode(['success' => false, 'errors' => $errors['email']]);
+    // http_response_code(400); // Bad Request
     exit;
 }
 

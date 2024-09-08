@@ -1,0 +1,78 @@
+/* Container Form */
+.custom-form-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: left; /* Form alignment to the left */
+}
+
+/* Hidden Class */
+.custom-hidden {
+    display: none;
+}
+
+/* Form Group */
+.custom-form-group {
+    margin: 15px auto;
+    width: 80%;
+}
+
+/* Label */
+.custom-form-group label {
+    display: block;
+    margin: 10px 0 5px;
+    text-align: left; /* Align labels to the left */
+}
+
+/* Input, Textarea, Select */
+.custom-form-group input[type="text"],
+.custom-form-group input[type="file"],
+.custom-form-group textarea,
+.custom-form-group select {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Button Group */
+#custom-btn-group-form-gallery {
+    display: flex;
+    gap: 8px; /* Space between buttons */
+    justify-content: flex-start; /* Align buttons to the left */
+}
+
+/* Button Styles */
+.custom-btn {
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.custom-btn-submit {
+    background-color: #2196F3;
+    color: white;
+}
+
+.custom-btn-submit:hover {
+    background-color: #0b7dda;
+}
+
+.custom-btn-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.custom-btn-cancel:hover {
+    background-color: #d32f2f;
+}
+
+/* Error Message */
+.custom-error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}

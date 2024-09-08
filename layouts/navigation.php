@@ -42,7 +42,6 @@ if (session_status() === PHP_SESSION_NONE) {
                             <li><a href="profile.php">Profile</a></li>
                             <li>
                                 <form id="logout-form" action="/belajar-web-native/auth/logout.php" method="post" style="display: none;">
-                                    <!-- Form tetap ada, tapi disembunyikan -->
                                 </form>
                                 <a href="#" class="btn-logout" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     Logout
