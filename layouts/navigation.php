@@ -55,7 +55,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </nav>
 
 
-    <script>
+<script>
     const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
 
     createApp({

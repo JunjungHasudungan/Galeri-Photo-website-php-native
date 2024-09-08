@@ -1,4 +1,5 @@
-<form id="custom-form-gallery" class="custom-hidden custom-form-container" method="POST" action="/services/galeri.php" enctype="multipart/form-data">
+<form id="custom-form-gallery" class=" mt-2 custom-hidden custom-form-container" method="POST" action="/services/galeri.php" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="store">
     <div class="custom-form-group">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title">

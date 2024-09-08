@@ -1,53 +1,68 @@
 <div class="container mx-auto p-4">
-    <div id="header">
-        <h2 class="text-2xl font-semibold mb-4">KONTENT LIST GALERI PHOTO ADMIN</h2>
-        <p>Welcome to your dashboard. Here is where you can manage your settings, view notifications, and more.</p>
-        <!-- Tombol Buat Galeri -->
-        <button id="btn-add-gallery" class="btn-add">Tambah Galeri</button>
-    </div>
     
-
-    <!-- Form Galeri Photo -->
-    <?php
+        <?php
         include '_form-galeri-photo.php';
-    ?>
-
-    <!-- Tabel Galeri -->
-    <table class="gallery-table" id="galeri-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Images</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (!empty($galleries)): ?>
-                <?php foreach ($galleries as $gallery): ?>
-                    <tr>
-                        <td><?= $gallery['id']; ?></td>
-                        <td><?= $gallery['title']; ?></td>
-                        <td><img src="<?= $gallery['image_path']; ?>" alt="Gallery Image" width="100"></td>
-                        <td><?= $gallery['description']; ?></td>
-                        <td><?= $gallery['category']; ?></td>
-                        <td>
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6">Data galeri tidak ada atau belum ada.</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+        ?>
+        <div id="header">
+            <h2 class="text-2xl font-semibold mb-4">KONTENT LIST GALERI PHOTO ADMIN</h2>
+            <p>Welcome to your dashboard. Here is where you can manage your settings, view notifications, and more.</p>
+            <!-- Tombol Buat Galeri -->
+            <button id="btn-add-gallery" class="btn-add">Tambah Galeri</button>
+        </div>
+        
+        <div id="gallery-app">
+            <!-- <galeri-table></galeri-table> -->
+            <galeri-table :galleries="galleries" :loading="loading" :error="error"></galeri-table>
+            <!-- {{ galleries }} -->
+        </div>
 </div>
 
+<!-- script untuk vue js -->
+<script type="module">
+    import { createApp, ref, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+    import ButtonComponent from '/belajar-web-native/assets/js/components/ButtonComponent.js';
+    import GaleriTable from '/belajar-web-native/assets/js/components/GaleriTable.js';
+    createApp({
+        components: {
+                ButtonComponent,
+                GaleriTable
+            },
+        setup() {
+            const galleries = ref([]);
+            const message = ref('pesan dari vue js');
+            const error = ref('');
+            const loading = ref(false);
+
+            async function fetchGalleries() {
+                loading.value = true;
+                try {
+                    const response = await axios.get('/belajar-web-native/services/galeri.php');
+                    const result = await response.data;
+                    galleries.value = result.data;
+                } catch (err) {
+                    error.value = 'Gagal mengambil data galeri.';
+                    console.error(err);
+                } finally {
+                    loading.value = false;
+                }
+            }
+
+
+            onMounted(async()=> {
+                await fetchGalleries();
+            });
+            return {
+                galleries,
+                error,
+                loading,
+                message
+            };
+        }
+    }).mount('#gallery-app');
+</script>
+
+
+<!-- script untuk ajax -->
 <script>
     // Script untuk menampilkan form galeri saat tombol ditekan
     document.getElementById('btn-add-gallery').addEventListener('click', function() {
@@ -55,7 +70,6 @@
         document.getElementById('custom-form-gallery').classList.toggle('custom-hidden');
         // Menyembunyikan header
         document.getElementById('header').style.display = 'none';
-        document.getElementById('galeri-table').style.display = 'none';
         
     });
 
@@ -63,84 +77,86 @@
     document.getElementById('custom-form-gallery').addEventListener('submit', async function(event) {
         event.preventDefault();
 
-        // menggumpulkan semua inputan dari form
-        const formData = new FormData(this);
+        const form = document.getElementById('custom-form-gallery');
+        const formData = new FormData(form);
+        const fileInput = form.querySelector('input[type="file"]');
+        const file = fileInput.files[0];
+        const allowedTypes = ['image/jpeg', 'image/png'];
+        const title = form.querySelector('input[name="title"]').value.trim();
+        const description = form.querySelector('textarea[name="description"]').value.trim();
+        const category = form.querySelector('select[name="category"]').value.trim();
 
-        // melakukan validasi inputan melalui objek form
-        const fileInput = form.querySelector('input[type="file"]'); // mengambil inputan file
-        const file = fileInput.files[0]; // objek fileInput mengambil tipe file
-        const allowedTypes = ['image/jpeg', 'image/png']; //registrasi jenis atau tipe file yang diizinkan
+        // Reset errors
+        ['title', 'image', 'description', 'category'].forEach(field => {
+            document.getElementById(`${field}-error`).textContent = '';
+        });
 
-        console.log('data', formData)
-        // Validasi tipe file
-        if (file && !allowedTypes.includes(file.type)) {
-            document.getElementById('image-error').textContent = 'File type is not allowed. Please upload a JPEG or PNG image.';
-            return; // Menghentikan proses form
+        // Validate
+        if (!title || !description || !category || !file) {
+            document.getElementById('form-error').textContent = 'Semua field harus diisi.';
+            return;
         }
 
-        document.getElementById('image-error').textContent = ''; // Menghapus pesan error jika ada
+        if (!allowedTypes.includes(file.type)) {
+            document.getElementById('image-error').textContent = 'Tipe file tidak diperbolehkan. Harap unggah gambar JPEG atau PNG.';
+            return;
+        }
 
-
-
+        // Submit form
         const response = await fetch('/belajar-web-native/services/galeri.php', {
             method: 'POST',
             body: formData
         });
 
         const result = await response.json();
-
-        // Display validation errors below each field
         if (result.errors) {
-            document.getElementById('title-error').textContent = result.errors.title || '';
-            document.getElementById('image-error').textContent = result.errors.image || '';
-            document.getElementById('description-error').textContent = result.errors.description || '';
-            document.getElementById('category-error').textContent = result.errors.category || '';
+            for (const [key, value] of Object.entries(result.errors)) {
+                document.getElementById(`${key}-error`).textContent = value;
+            }
         } else {
-            // Handle success (e.g., reload the page or reset the form)
-            alert('Gallery created successfully!');
-            window.location.reload();
+            form.reset();
+            form.classList.add('custom-hidden');
+            document.getElementById('header').style.display = 'block';
         }
     });
+
 
     // Script untuk menangani aksi tombol Cancel
     document.getElementById('btn-cancel').addEventListener('click', function() {
         const form = document.getElementById('custom-form-gallery');
-        const formData = new FormData(form);
-
-        const fileInput = form.querySelector('input[type="file"]');
-        const file = fileInput.files[0]; 
-        const allowedTypes = ['image/jpeg', 'image/png'];
-    
-        console.log('file', formData.get('image'))
-    if (formData.get('title') == '') {
-        document.getElementById('title-error').textContent = 'Judul tidak boleh kosong'; 
-    }
-
-    if (file && !allowedTypes.includes(file.type)) {
-        // Menampilkan pesan error jika tipe file tidak sesuai
-        document.getElementById('image-error').textContent = 'File type is not allowed. Please upload a JPEG or PNG image.';
-        return; 
-    } 
-    else {
-        // Jika tipe file sesuai, lanjutkan dengan proses form
-        document.getElementById('image-error').textContent = ''; // Menghapus pesan error jika ada
-    }
-        // if (formData.get('title') == '' || formData.get('description') == '' || formData.get('category') == '') {
-        //     console.log('datanya kosong')
-        //     return
-        // }
+        const title = form.querySelector('input[name="title"]').value.trim();
+        const image = form.querySelector('input[name="image"]').files.length;  // Mengecek apakah ada file yang diupload
+        const description = form.querySelector('textarea[name="description"]').value.trim();
+        const category = form.querySelector('select[name="category"]').value.trim();
         
-        // console.log(formData.get('image'))
-
-        if (formData.has('title') || formData.has('description') || formData.has('category') || formData.has('image')) {
-            if (confirm('Are you sure you want to cancel? This will delete all unsaved data.')) {
-                form.reset(); // Menghapus inputan
-                form.classList.add('custom-hidden'); // Menyembunyikan form
-                document.getElementById('header').style.display = 'block'; // Menampilkan header
+        // Memeriksa jika ada field yang kosong
+        if (title === '' || description === '' || category === '' || image === 0) {
+            // Tampilkan alert jika ada field yang kosong
+            const confirmCancel = confirm('Beberapa field kosong. Apakah Anda yakin ingin membatalkan?');
+            
+            if (confirmCancel) {
+                // Jika pengguna mengkonfirmasi, hapus pesan error
+                document.getElementById('title-error').textContent = '';
+                document.getElementById('image-error').textContent = '';
+                document.getElementById('description-error').textContent = '';
+                document.getElementById('category-error').textContent = '';
+                
+                // Reset formulir dan tampilkan header serta tabel galeri
+                form.reset();
+                form.classList.add('custom-hidden');
+                document.getElementById('header').style.display = 'block';
+                document.getElementById('galeri-table').style.display = 'block';
             }
-        } else {
-            form.classList.add('custom-hidden'); // Menyembunyikan form
-            document.getElementById('header').style.display = 'block'; // Menampilkan header
+            // Jika pengguna tidak mengkonfirmasi, tetap di halaman
+            return;
+        }
+
+        // Jika semua field sudah diisi, proses untuk menutup formulir
+        if (confirm('Apakah Anda yakin ingin membatalkan? Semua data yang belum disimpan akan dihapus.')) {
+            form.reset();  // Reset formulir untuk menghapus inputan
+            form.classList.add('custom-hidden');  // Sembunyikan formulir
+            document.getElementById('header').style.display = 'block';  // Tampilkan header
+            document.getElementById('galeri-table').style.display = 'block';  // Tampilkan tabel galeri
         }
     });
 </script>

@@ -8,8 +8,8 @@
     <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | ' . $appName : $appName; ?></title>
     <link rel="stylesheet" href="../assets/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- <script src="../assets/js/helper.js"></script> -->
-    <base href="/belajar-web-native">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="/belajar-web-native/assets/js/helper.js"></script>
 
 </head>
     <body>
@@ -22,6 +22,6 @@
                 }
             ?>
         </div>
-        <script src="assets/js/helper.js"></script>
+        <!-- <script src="assets/js/helper.js"></script> -->
     </body>
 </html>

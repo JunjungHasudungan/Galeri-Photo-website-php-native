@@ -2,7 +2,7 @@
     session_start();
     if (!isset($_SESSION['user_id'])) {
         // Jika belum login, arahkan ke halaman login
-        header('Location:/belajar-web-native');
+        header('Location:/belajar-web-native/');
         exit();
     }
 
