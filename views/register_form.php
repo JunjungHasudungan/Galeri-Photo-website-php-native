@@ -1,5 +1,5 @@
-<h1>Register</h1>
-<form id="registerForm">
+<h1 style="margin-bottom: 10px;">Register</h1>
+<form style="margin-top: 10px;" id="registerForm">
     <label for="username">Username:</label>
     <input type="text" id="username" name="username">
     <small class="error-message" id="usernameError"></small>
