@@ -18,4 +18,4 @@ Projek Galeri Photo native ini dibangun untuk menajdi bahan materi pembelajaran 
 - COMMENT-Admin-Galeri-Photo
 
 ### Contribusi Pembuat Aplikasi Website Galeri-Photo
-- **[Hasudungan Sitorus](https://x.com/jung_doeng)** 
+- **[Hasudungan Sitorus]** 
