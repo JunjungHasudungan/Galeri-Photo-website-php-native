@@ -14,23 +14,23 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 </head>
-<body>
+    <body>
 
-<?php include 'navigation.php'; ?>
+        <?php include 'navigation.php'; ?>
 
-<div class="container">
-    <div class="main-content" id="main-content">
-        <?php
-            if (isset($slot)) {
-                $fullPath = __DIR__ . '/../' . $slot;
-                if (file_exists($fullPath)) {
-                    include $fullPath;
-                } else {
-                    echo "File not found: $fullPath";
-                }
-            }
-        ?>
-    </div>
-</div>
-</body>
+        <div class="container">
+            <div class="main-content" id="main-content">
+                <?php
+                    if (isset($slot)) {
+                        $fullPath = __DIR__ . '/../' . $slot;
+                        if (file_exists($fullPath)) {
+                            include $fullPath;
+                        } else {
+                            echo "File not found: $fullPath";
+                        }
+                    }
+                ?>
+            </div>
+        </div>
+    </body>
 </html>

@@ -1,7 +1,8 @@
 <?php
     include '../../helper/categories.php'
 ?>
-<form   id="custom-form-gallery"
+<p>hello</p>
+<!-- <form   id="custom-form-gallery"
         v-if="isFormVisible"
         class="custom-form-container" 
         @submit.prevent="submitForm"
@@ -46,4 +47,4 @@
             Cancel
         </button>
     </div>
-</form>
+</form> -->
