@@ -1,4 +1,4 @@
-import { defineComponent, ref, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+import { defineComponent, ref, onMounted, watch } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
 export default defineComponent({
     name: 'GaleriTable',
@@ -17,6 +17,24 @@ export default defineComponent({
         }
     },
     setup(props) {
+        const localGalleries = ref(props.galleries);
+        const error = ref(props.error); 
+
+        watch(
+            () => props.galleries,
+            (newVal) => {
+                // console.log('Galleries updated:', newVal); // Ditampilkan saat data berubah
+                localGalleries.value = newVal;
+                if (newVal.length === 0) {
+                    error.value = 'Tidak ada data galeri.';
+                } else {
+                    error.value = '';
+                }
+            },
+            { immediate: true } // Immediate untuk langsung trigger saat mounted
+        );
+
+
         function editGallery(id) {
             // Implement edit functionality here
             console.log(`Edit gallery with ID: ${id}`);
@@ -30,13 +48,13 @@ export default defineComponent({
         return {
             editGallery,
             deleteGallery,
-            galleries: props.galleries,
+            galleries: localGalleries,
             loading: props.loading,
             error: props.error
         };
     },
     template: `
-        <div>
+        <div id="galeri-table">
             <table class="gallery-table text-2xl font-semibold mb-4" v-if="galleries.length > 0">
                 <thead>
                     <tr>

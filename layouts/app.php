@@ -19,7 +19,7 @@
 <?php include 'navigation.php'; ?>
 
 <div class="container">
-    <div class="main-content">
+    <div class="main-content" id="main-content">
         <?php
             if (isset($slot)) {
                 $fullPath = __DIR__ . '/../' . $slot;

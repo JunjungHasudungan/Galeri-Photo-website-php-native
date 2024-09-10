@@ -67,11 +67,19 @@ $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
         if ($result) {
             // Setelah pendaftaran berhasil, atur sesi
+            $userId = $pdo->lastInsertId();
+
+            // Ambil data pengguna berdasarkan ID
+            $sql = "SELECT id, username, email, role FROM users WHERE id = :id";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([':id' => $userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
             $_SESSION['logged_in'] = true;
             $_SESSION['user_name'] = $username; // Atur nama pengguna di sesi
             $_SESSION['user_role'] = $user['role'];
         
-            // Kirim respons sukses
+            // Kirim respons sukses password
             http_response_code(201); // Created
             echo json_encode(['success' => true, 'message' => 'Registrasi berhasil', 'result' => $result]);
         } else {

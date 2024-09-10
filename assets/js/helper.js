@@ -73,7 +73,6 @@ $(document).ready(function() {
             },
         });
     }
-    
 
     $('#registerForm').on('submit', function(event) {
         event.preventDefault();
@@ -125,7 +124,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success == true) {
                     $('#registerForm')[0].reset();
-                    window.location.href = 'views/users/dashboard.php';
+                    window.location.href = '/belajar-web-native/views/users/dashboard.php';
                 } 
                 $('#emailError').text(response.errors);
             },

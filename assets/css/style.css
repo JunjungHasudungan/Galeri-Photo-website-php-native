@@ -57,13 +57,11 @@ body {
 
 /* Container styling */
 .container {
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 90vh; /* Adjust height to reduce vertical space */
-    margin-top: -50px; /* Lift the form slightly upwards */
 }
 
 .container h1 {

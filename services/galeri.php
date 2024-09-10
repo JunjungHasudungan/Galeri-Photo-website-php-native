@@ -277,7 +277,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode(['errors' => ['general' => 'Aksi tidak valid.']]);
     }
 } else {
-    // Jika bukan POST, asumsi GET dan ambil data
+    // Menyiapkan struktur response
     header('Content-Type: application/json'); // Pastikan header JSON
-    echo json_encode(['data'=> getAllPost()]);
+    $dataPost = getAllPost();
+    echo json_encode(['data'=> $dataPost ]);
 }
