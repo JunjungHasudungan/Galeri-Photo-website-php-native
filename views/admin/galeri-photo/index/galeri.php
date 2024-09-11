@@ -19,11 +19,9 @@
 <!-- script untuk vue js -->
 <script type="module">
     import { createApp, ref, onMounted, reactive } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
-    import ButtonComponent from '/belajar-web-native/assets/js/components/ButtonComponent.js';
     import GaleriTable from '/belajar-web-native/assets/js/components/GaleriTable.js';
     createApp({
         components: {
-                ButtonComponent,
                 GaleriTable
             },
         setup() {
@@ -31,7 +29,6 @@
             const message = ref('pesan dari vue js');
             const error = ref('');
             const loading = ref(false);
-            const title = ref('')
             const isOpen = ref(true);
             const isFormVisible = ref(false);
 
@@ -71,53 +68,64 @@
             }
 
             // function untuk store formGaleri
-            // async function storeGaleri() {
-            //     // Reset errors
-            //     Object.keys(errors).forEach(key => errors[key] = '');
+            async function storeGaleri() {
+                // Reset errors
+                Object.keys(errors).forEach(key => errors[key] = '');
 
-            //     // Validasi
-            //     if (!form.title) errors.title = 'Title is required.';
-            //     if (!form.description) errors.description = 'Description is required.';
-            //     if (!form.category) errors.category = 'Category is required.';
-            //     if (!form.image) errors.image = 'Image is required.';
-            //     else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
-            //         errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
-            //     }
+                // Validasi
+                if (!form.title) errors.title = 'dsd is required.';
+                if (!form.description) errors.description = 'Description is required.';
+                if (!form.category) errors.category = 'Category is required.';
+                if (!form.image) errors.image = 'Image is required.';
+                else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
+                    errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
+                }
 
-            //     if (Object.values(errors).some(error => error)) return; 
+                if (Object.values(errors).some(error => error)) return; 
 
-            //      // Siapkan FormData
-            //     const formData = new FormData();
-            //     formData.append('title', form.title);
-            //     formData.append('image', form.image);
-            //     formData.append('description', form.description);
-            //     formData.append('category', form.category);
+                 // Siapkan FormData
+                const formData = new FormData();
+                formData.append('title', form.title);
+                formData.append('image', form.image);
+                formData.append('description', form.description);
+                formData.append('category', form.category);
 
-            //     try {
-            //         const response = await axios.post('/belajar-web-native/services/galeri.php', 
-            //             formData, {
-            //                     headers: {
-            //                         'Content-Type': 'multipart/form-data'
-            //                     }
-            //             });
+                try {
+                    const response = await axios.post('/belajar-web-native/services/galeri.php', 
+                        formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                        });
 
-            //         const result = await response.json();
-            //         if (result.errors) {
-            //             Object.entries(result.errors).forEach(([key, message]) => {
-            //                 errors[key] = message;
-            //             });
-            //         } else {
-            //             // Reset form dan sembunyikan form
-            //             Object.keys(form).forEach(key => form[key] = '');
-            //             isFormVisible.value = false;
-            //             fetchGalleries(); // Refresh data galeri
-            //         }
-            //     } catch (err) {
-            //         console.error('Error submitting form:', err);
-            //     }
-            // }
+                    const result = await response.json();
+                    if (result.errors) {
+                        Object.entries(result.errors).forEach(([key, message]) => {
+                            errors[key] = message;
+                        });
+                    } else {
+                        // Reset form dan sembunyikan form
+                        Object.keys(form).forEach(key => form[key] = '');
+                        isFormVisible.value = false;
+                        fetchGalleries(); // Refresh data galeri
+                    }
+                } catch (err) {
+                    console.error('Error submitting form:', err);
+                }
+            }
             async function submitForm() {
-                console.log('tombol store ditekan');
+                Object.keys(errors).forEach(key => errors[key] = '');
+
+                // Validasi
+                if (!form.title) errors.title = 'Title is required.';
+                if (!form.description) errors.description = 'Description is required.';
+                if (!form.category) errors.category = 'Category is required.';
+                if (!form.image) errors.image = 'Image is required.';
+                else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
+                    errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
+                }
+
+                if (Object.values(errors).some(error => error)) return; 
             }
             // function untuk cancel storeForm
             function cancelStoreForm() {
@@ -127,6 +135,7 @@
             // function untuk handle showForm
             function showForm() {
                 isFormVisible.value = true; // Tampilkan form
+
             }
 
             onMounted(async()=> {
@@ -135,12 +144,13 @@
             return {
                 galleries,
                 error,
+                errors,
                 loading,
                 message,
                 isOpen,
                 showForm,
                 form,
-                title,
+                handleFileChange,
                 isFormVisible,
                 cancelStoreForm,
                 submitForm,

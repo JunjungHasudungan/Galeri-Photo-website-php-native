@@ -1,8 +1,7 @@
 <?php
     include '../../helper/categories.php'
 ?>
-<p>hello</p>
-<!-- <form   id="custom-form-gallery"
+<form   id="custom-form-gallery"
         v-if="isFormVisible"
         class="custom-form-container" 
         @submit.prevent="submitForm"
@@ -11,13 +10,13 @@
     <input type="hidden" name="action" value="store">
     <div class="custom-form-group">
         <label for="title">Title:</label>
-        <input v-model="form.title" type="text" id="title" name="title">
+        <input v-model="form.title" type="text" id="title">
         <span class="custom-error-message" id="title-error">{{ errors.title }}</span>
     </div>
 
     <div class="custom-form-group">
         <label for="image">Images:</label>
-        <input type="file" id="image" name="image" @change="handleFileChange">
+        <input type="file" id="image"  @change="handleFileChange">
         <span class="custom-error-message" id="image-error">{{ errors.image }}</span>
     </div>
 
@@ -31,7 +30,11 @@
         <label for="category">Category:</label>
         <select v-model="form.category" id="category" name="category">
             <?php foreach(CATEGORIES as $key => $category): ?>
-                <option value="<?php echo $key;?>"> <?php htmlspecialchars($key)?> </option>
+                <!-- <option value="<?php echo $key;?>"> <?php echo htmlspecialchars($category)?> </option> -->
+                <option value="<?php echo htmlspecialchars($key); ?>" 
+                    <?php echo ($key === array_key_first(CATEGORIES)) ? 'selected' : ''; ?>>
+                    <?php echo htmlspecialchars($category); ?>
+                </option>
             <?php endforeach; ?>
         </select>
         <span class="custom-error-message" id="category-error">{{ errors.category }}</span>
@@ -47,4 +50,4 @@
             Cancel
         </button>
     </div>
-</form> -->
+</form>
