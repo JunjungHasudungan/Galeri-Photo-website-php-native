@@ -30,7 +30,8 @@
 
             const form = reactive({
                 'title': '',
-                'image': null,
+                // 'image': null,
+                'images': [],
                 'description': '',
                 'category': ''
             });
@@ -54,6 +55,7 @@
                         setTimeout(() => {
                             galleries.value = result.data; // Set data galeri
                             loading.value = false; // Sembunyikan loading setelah 2 detik
+                            console.log('Fetched galleries:', galleries.value); // 
                     }, 2000); 
 
                 } catch (err) {
@@ -67,7 +69,8 @@
 
             // funcion untuk menghandle perubahan file
             function handleFileChange(event) {
-                form.image = event.target.files[0];
+                // form.image = event.target.files[0];
+                form.images = Array.from(event.target.files);
             }
 
             async function submitForm() {
@@ -77,9 +80,19 @@
                 if (!form.title) errors.title = 'Title is required.';
                 if (!form.description) errors.description = 'Description is required.';
                 if (!form.category) errors.category = 'Category is required.';
-                if (!form.image) errors.image = 'Image is required.';
-                else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
-                    errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
+
+                // if (!form.image) errors.image = 'Image is required.';
+                // else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
+                //     errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
+                // }
+                if (!form.images || form.images.length === 0) {
+                    errors.image = 'At least one image is required.';
+                } else {
+                    form.images.forEach((image, index) => {
+                        if (!['image/jpeg', 'image/png'].includes(image.type)) {
+                            errors.image = `File ${index + 1} is an invalid type. Please upload JPEG or PNG images.`;
+                        }
+                    });
                 }
 
                 if (Object.values(errors).some(error => error)) return; 
@@ -88,10 +101,15 @@
                 const formData = new FormData();
                 formData.append('action', 'store'); 
                 formData.append('title', form.title);
-                formData.append('image', form.image);
+                // formData.append('image', form.image);
                 formData.append('description', form.description);
                 formData.append('category', form.category);
 
+                form.images.forEach((image, index) => {
+                    formData.append(`images[${index}]`, image); // Gunakan notasi array untuk penamaan
+                });
+
+                // console.log(formData);
                 try {
                     const response = await axios.post('/belajar-web-native/services/galeri.php', 
                         formData, {
@@ -104,16 +122,18 @@
 
                         if (result.errors) {
                             // Jika ada error, tampilkan error ke masing-masing input
-                            Object.entries(result.errors).forEach(([key, message]) => {
-                                errors[key] = message;
-                            });
+                            Object.keys(form).forEach(key => form[key] = key === 'images' ? [] : '');
+                            isFormVisible.value = false;
+                            // Object.entries(result.errors).forEach(([key, message]) => {
+                            //     errors[key] = message;
+                            // });
                         } else {
                             // Reset form dan sembunyikan form jika berhasil
                             Object.keys(form).forEach(key => form[key] = '');
                             isFormVisible.value = false;
                             
                             // Refresh data galeri setelah berhasil menyimpan
-                            fetchGalleries(); 
+                            await fetchGalleries(); 
                         }
                 } catch (err) {
                     console.error('Error submitting form:', err);

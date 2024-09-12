@@ -2,22 +2,29 @@
 require_once '../config/database.php';
 
 // Fungsi untuk validasi data sebelum disimpan
-function validateStoreData($title, $category, $description, $imageFile) {
+function validateStoreData($title, $category, $description, $imageFiles) {
     $errors = [];
 
     if (empty($title)) $errors['title'] = 'Judul wajib diisi.';
     if (empty($category)) $errors['category'] = 'Kategori wajib diisi.';
     if (empty($description)) $errors['description'] = 'Keterangan wajib diisi.';
 
-    if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
-        $allowedExts = ['jpg', 'jpeg', 'png'];
-        $fileExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
-
-        if (!in_array($fileExtension, $allowedExts)) {
-            $errors['image'] = 'Tipe file tidak diperbolehkan. Harap unggah gambar JPEG atau PNG.';
-        }
-    } else {
+    // Validasi gambar, pastikan array file tidak kosong
+    if (empty($imageFiles['name'][0])) {
         $errors['image'] = 'Gambar wajib diisi.';
+    } else {
+        foreach ($imageFiles['error'] as $index => $error) {
+            if ($error === UPLOAD_ERR_OK) {
+                $allowedExts = ['jpg', 'jpeg', 'png'];
+                $fileExtension = strtolower(pathinfo($imageFiles['name'][$index], PATHINFO_EXTENSION));
+
+                if (!in_array($fileExtension, $allowedExts)) {
+                    $errors['image_' . $index] = 'Tipe file tidak diperbolehkan. Harap unggah gambar JPEG atau PNG.';
+                }
+            } else {
+                $errors['image_' . $index] = 'Terjadi kesalahan saat mengunggah gambar.';
+            }
+        }
     }
 
     return $errors;
@@ -80,13 +87,58 @@ foreach ($rows as $row) {
 
 
 // Fungsi untuk menyimpan data ke database
-function storePost($title, $category, $description, $imageFile) {
+function storePost($title, $category, $description, $imageFiles) {
     global $pdo;
-    $errors = validateStoreData($title, $category, $description, $imageFile);
+    // $errors = validateStoreData($title, $category, $description, $imageFile);
+    $errors = validateStoreData($title, $category, $description, $imageFiles);
 
     if (!empty($errors)) {
         return ['errors' => $errors];
     }
+
+    // try {
+    //     // Mulai transaksi
+    //     $pdo->beginTransaction();
+
+    //     // Insert ke tabel posts
+    //     $stmt = $pdo->prepare("INSERT INTO posts (title, category, description) VALUES (:title, :category, :description)");
+    //     $stmt->execute([
+    //         ':title' => $title,
+    //         ':category' => $category,
+    //         ':description' => $description,
+    //     ]);
+
+    //     // Ambil ID post yang baru diinsert
+    //     $postId = $pdo->lastInsertId();
+
+    //     // Cek apakah ada file gambar
+    //     if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
+    //         $allowedExts = ['jpg', 'jpeg', 'png'];
+    //         $fileExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
+    //         $uploadDir = '../uploaded_images/';
+    //         $fileName = basename($imageFile['name']); 
+    //         $filePath = $uploadDir . $fileName;
+
+    //         if (in_array($fileExtension, $allowedExts) && move_uploaded_file($imageFile['tmp_name'], $filePath)) {
+    //             $stmt = $pdo->prepare("INSERT INTO images (folder_name, title, post_id) VALUES (:folder_name, :title, :post_id)");
+    //             $stmt->execute([
+    //                 ':folder_name'  => $filePath,
+    //                 ':title'        => $fileName,
+    //                 ':post_id'      => $postId,
+    //             ]);
+    //         } else {
+    //             throw new Exception('Tipe file tidak diperbolehkan atau gagal memindahkan file.');
+    //         }
+    //     }
+
+    //     // Commit transaksi
+    //     $pdo->commit();
+    //     return ['success' => true];
+    // } catch (Exception $e) {
+    //     // Rollback transaksi jika terjadi kesalahan
+    //     $pdo->rollBack();
+    //     return ['errors' => ['general' => $e->getMessage()]];
+    // }
 
     try {
         // Mulai transaksi
@@ -103,24 +155,43 @@ function storePost($title, $category, $description, $imageFile) {
         // Ambil ID post yang baru diinsert
         $postId = $pdo->lastInsertId();
 
-        // Cek apakah ada file gambar
-        if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
-            $allowedExts = ['jpg', 'jpeg', 'png'];
-            $fileExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
-            $uploadDir = '../uploaded_images/';
-            $fileName = basename($imageFile['name']); 
-            $filePath = $uploadDir . $fileName;
+        // Loop melalui semua file gambar
+        foreach ($imageFiles['error'] as $key => $error) {
+            if ($error === UPLOAD_ERR_OK) {
+                $imageFile = [
+                    'name' => $imageFiles['name'][$key],
+                    'type' => $imageFiles['type'][$key],
+                    'tmp_name' => $imageFiles['tmp_name'][$key],
+                    'error' => $imageFiles['error'][$key],
+                    'size' => $imageFiles['size'][$key],
+                ];
 
-            if (in_array($fileExtension, $allowedExts) && move_uploaded_file($imageFile['tmp_name'], $filePath)) {
-                // Insert ke tabel images
-                $stmt = $pdo->prepare("INSERT INTO images (folder_name, title, post_id) VALUES (:folder_name, :title, :post_id)");
-                $stmt->execute([
-                    ':folder_name'  => $filePath,
-                    ':title'        => $fileName,
-                    ':post_id'      => $postId,
-                ]);
-            } else {
-                throw new Exception('Tipe file tidak diperbolehkan atau gagal memindahkan file.');
+                $allowedExts = ['jpg', 'jpeg', 'png'];
+                $fileExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
+                $uploadDir = '../uploaded_images/';
+                $originalFileName = pathinfo($imageFile['name'], PATHINFO_FILENAME); // Ambil nama file tanpa ekstensi
+                $fileName = $originalFileName . '.' . $fileExtension; // Nama file awal
+                $filePath = $uploadDir . $fileName;
+                $counter = 1;
+                
+                // Cek apakah file dengan nama yang sama sudah ada, jika ya, tambahkan angka
+                while (file_exists($filePath)) {
+                    $fileName = $originalFileName . '_' . $counter . '.' . $fileExtension;
+                    $filePath = $uploadDir . $fileName;
+                    $counter++;
+                }
+                
+                if (in_array($fileExtension, $allowedExts) && move_uploaded_file($imageFile['tmp_name'], $filePath)) {
+                    $stmt = $pdo->prepare("INSERT INTO images (folder_name, title, post_id) VALUES (:folder_name, :title, :post_id)");
+                    $stmt->execute([
+                        ':folder_name' => $filePath, // Path lengkap dengan direktori
+                        ':title' => $fileName,       // Nama file asli atau yang sudah dimodifikasi
+                        ':post_id' => $postId,
+                    ]);
+                } else {
+                    throw new Exception('Tipe file tidak diperbolehkan atau gagal memindahkan file.');
+                }
+                
             }
         }
 
@@ -243,8 +314,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $category = $_POST['category'] ?? '';
                 $description = $_POST['description'] ?? '';
                 $image = $_FILES['image'] ?? null;
+                $images = $_FILES['images'] ?? null;
 
-                $result = storePost($title, $category, $description, $image);
+                // $result = storePost($title, $category, $description, $image);
+                $result = storePost($title, $category, $description, $images);
                 echo json_encode($result);
                 break;
 

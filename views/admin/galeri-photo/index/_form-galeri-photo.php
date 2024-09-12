@@ -16,7 +16,8 @@
 
     <div class="custom-form-group">
         <label for="image">Images:</label>
-        <input type="file" id="image"  @change="handleFileChange">
+        <!-- <input type="file" id="image"  @change="handleFileChange"> -->
+        <input type="file" id="image"  @change="handleFileChange" multiple>
         <span class="custom-error-message" id="image-error">{{ errors.image }}</span>
     </div>
 

@@ -23,6 +23,7 @@ export default defineComponent({
         watch(
             () => props.galleries,
             (newVal) => {
+                console.log('Galleries updated:', newVal);
                 // console.log('Galleries updated:', newVal); // Ditampilkan saat data berubah
                 localGalleries.value = newVal;
                 if (newVal.length === 0) {
@@ -62,17 +63,15 @@ export default defineComponent({
                     <tr>
                         <th>ID</th>
                         <th>Title</th>
-                        <th>Images</th>
                         <th>Description</th>
                         <th>Category</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="gallery in galleries" :key="gallery.id">
-                        <td>{{ gallery.id }}</td>
+                    <tr v-for="(gallery, index) in galleries" :key="gallery.id">
+                        <td>{{ index + 1 }}</td>
                         <td>{{ gallery.title }}</td>
-                        <td><img :src="gallery.image_path" alt="Gallery Image" width="100"></td>
                         <td>{{ gallery.description }}</td>
                         <td>{{ gallery.category }}</td>
                         <td>
