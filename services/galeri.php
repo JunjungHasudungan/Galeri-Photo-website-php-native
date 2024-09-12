@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $image = $_FILES['image'] ?? null;
 
                 $result = storePost($title, $category, $description, $image);
-                echo json_encode($image);
+                echo json_encode($result);
                 break;
 
             case 'update':

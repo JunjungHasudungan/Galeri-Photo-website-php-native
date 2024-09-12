@@ -1,19 +1,15 @@
 <div class="container" id="app-galery">
-    
     <div id="header" v-if="!isFormVisible">
         <h2 class="text-2xl font-semibold mb-4">KONTENT LIST GALERI PHOTO ADMIN</h2>
         <p>Welcome to your dashboard. Here is where you can manage your settings, view notifications, and more.</p>
         <button id="btn-add-gallery" @click="showForm" class="btn-add">Tambah Galeri</button>
     </div>
-    
     <div id="gallery-table" v-if="!isFormVisible">
         <galeri-table :galleries="galleries" :loading="loading" :error="error"></galeri-table>
     </div>
-
         <?php
             include '_form-galeri-photo.php';
         ?>
-    <!-- </password> -->
 </div>
 
 <!-- script untuk vue js -->
@@ -50,11 +46,18 @@
             // function untuk menampilkan data 
             async function fetchGalleries() {
                 loading.value = true;
+                error.value = '';
                 try {
                     const response = await axios.get('/belajar-web-native/services/galeri.php');
                     const result = await response.data;
-                    galleries.value = result.data;
+                        
+                        setTimeout(() => {
+                            galleries.value = result.data; // Set data galeri
+                            loading.value = false; // Sembunyikan loading setelah 2 detik
+                    }, 2000); 
+
                 } catch (err) {
+                    loading.vaue = false;
                     error.value = 'Gagal mengambil data galeri.';
                     console.error(err);
                 } finally {
@@ -67,52 +70,6 @@
                 form.image = event.target.files[0];
             }
 
-            // function untuk store formGaleri
-            async function storeGaleri() {
-                // Reset errors
-                Object.keys(errors).forEach(key => errors[key] = '');
-
-                // Validasi
-                if (!form.title) errors.title = 'dsd is required.';
-                if (!form.description) errors.description = 'Description is required.';
-                if (!form.category) errors.category = 'Category is required.';
-                if (!form.image) errors.image = 'Image is required.';
-                else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
-                    errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
-                }
-
-                if (Object.values(errors).some(error => error)) return; 
-
-                 // Siapkan FormData
-                const formData = new FormData();
-                formData.append('title', form.title);
-                formData.append('image', form.image);
-                formData.append('description', form.description);
-                formData.append('category', form.category);
-
-                try {
-                    const response = await axios.post('/belajar-web-native/services/galeri.php', 
-                        formData, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                        });
-
-                    const result = await response.json();
-                    if (result.errors) {
-                        Object.entries(result.errors).forEach(([key, message]) => {
-                            errors[key] = message;
-                        });
-                    } else {
-                        // Reset form dan sembunyikan form
-                        Object.keys(form).forEach(key => form[key] = '');
-                        isFormVisible.value = false;
-                        fetchGalleries(); // Refresh data galeri
-                    }
-                } catch (err) {
-                    console.error('Error submitting form:', err);
-                }
-            }
             async function submitForm() {
                 Object.keys(errors).forEach(key => errors[key] = '');
 
@@ -126,6 +83,41 @@
                 }
 
                 if (Object.values(errors).some(error => error)) return; 
+
+                // Siapkan FormData
+                const formData = new FormData();
+                formData.append('action', 'store'); 
+                formData.append('title', form.title);
+                formData.append('image', form.image);
+                formData.append('description', form.description);
+                formData.append('category', form.category);
+
+                try {
+                    const response = await axios.post('/belajar-web-native/services/galeri.php', 
+                        formData, {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                        });
+                    
+                        const result = response.data;
+
+                        if (result.errors) {
+                            // Jika ada error, tampilkan error ke masing-masing input
+                            Object.entries(result.errors).forEach(([key, message]) => {
+                                errors[key] = message;
+                            });
+                        } else {
+                            // Reset form dan sembunyikan form jika berhasil
+                            Object.keys(form).forEach(key => form[key] = '');
+                            isFormVisible.value = false;
+                            
+                            // Refresh data galeri setelah berhasil menyimpan
+                            fetchGalleries(); 
+                        }
+                } catch (err) {
+                    console.error('Error submitting form:', err);
+                }
             }
             // function untuk cancel storeForm
             function cancelStoreForm() {

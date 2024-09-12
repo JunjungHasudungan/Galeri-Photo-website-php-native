@@ -55,7 +55,9 @@ export default defineComponent({
     },
     template: `
         <div id="galeri-table">
-            <table class="gallery-table text-2xl font-semibold mb-4" v-if="galleries.length > 0">
+        <div v-if="!loading && !error && galleries.length === 0">Loading...</div>
+
+            <table class="gallery-table text-2xl font-semibold mb-4" v-if="!loading && !error && galleries.length > 0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -80,11 +82,8 @@ export default defineComponent({
                     </tr>
                 </tbody>
             </table>
-            <p v-else>Data galeri tidak ada atau belum ada.</p>
-
-            <!-- Loading and Error Handling -->
-            <div v-if="loading">Loading data galeri...</div>
-            <div v-if="error">{{ error }}</div>
+            
+            
         </div>
     `
 });

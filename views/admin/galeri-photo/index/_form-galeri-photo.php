@@ -5,7 +5,7 @@
         v-if="isFormVisible"
         class="custom-form-container" 
         @submit.prevent="submitForm"
-        method="POST" action="/services/galeri.php" 
+        method="POST" 
         enctype="multipart/form-data">
     <input type="hidden" name="action" value="store">
     <div class="custom-form-group">
