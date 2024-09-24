@@ -89,67 +89,29 @@ foreach ($rows as $row) {
 // Fungsi untuk menyimpan data ke database
 function storePost($title, $category, $description, $imageFiles) {
     global $pdo;
-    // $errors = validateStoreData($title, $category, $description, $imageFile);
     $errors = validateStoreData($title, $category, $description, $imageFiles);
 
     if (!empty($errors)) {
         return ['errors' => $errors];
     }
 
-    // try {
-    //     // Mulai transaksi
-    //     $pdo->beginTransaction();
-
-    //     // Insert ke tabel posts
-    //     $stmt = $pdo->prepare("INSERT INTO posts (title, category, description) VALUES (:title, :category, :description)");
-    //     $stmt->execute([
-    //         ':title' => $title,
-    //         ':category' => $category,
-    //         ':description' => $description,
-    //     ]);
-
-    //     // Ambil ID post yang baru diinsert
-    //     $postId = $pdo->lastInsertId();
-
-    //     // Cek apakah ada file gambar
-    //     if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
-    //         $allowedExts = ['jpg', 'jpeg', 'png'];
-    //         $fileExtension = strtolower(pathinfo($imageFile['name'], PATHINFO_EXTENSION));
-    //         $uploadDir = '../uploaded_images/';
-    //         $fileName = basename($imageFile['name']); 
-    //         $filePath = $uploadDir . $fileName;
-
-    //         if (in_array($fileExtension, $allowedExts) && move_uploaded_file($imageFile['tmp_name'], $filePath)) {
-    //             $stmt = $pdo->prepare("INSERT INTO images (folder_name, title, post_id) VALUES (:folder_name, :title, :post_id)");
-    //             $stmt->execute([
-    //                 ':folder_name'  => $filePath,
-    //                 ':title'        => $fileName,
-    //                 ':post_id'      => $postId,
-    //             ]);
-    //         } else {
-    //             throw new Exception('Tipe file tidak diperbolehkan atau gagal memindahkan file.');
-    //         }
-    //     }
-
-    //     // Commit transaksi
-    //     $pdo->commit();
-    //     return ['success' => true];
-    // } catch (Exception $e) {
-    //     // Rollback transaksi jika terjadi kesalahan
-    //     $pdo->rollBack();
-    //     return ['errors' => ['general' => $e->getMessage()]];
-    // }
-
     try {
         // Mulai transaksi
         $pdo->beginTransaction();
 
+        $slug = trim(strtolower($title)); 
+        $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug); 
+        $slug = preg_replace('/-+/', '-', $slug); 
+        $slug = trim($slug, '-'); 
+        $resultSlug = substr($slug, 0, 20);
+
         // Insert ke tabel posts
-        $stmt = $pdo->prepare("INSERT INTO posts (title, category, description) VALUES (:title, :category, :description)");
+        $stmt = $pdo->prepare("INSERT INTO posts (title, category, description, slug) VALUES (:title, :category, :description, :slug)");
         $stmt->execute([
             ':title' => $title,
             ':category' => $category,
             ':description' => $description,
+            ':slug' => $resultSlug
         ]);
 
         // Ambil ID post yang baru diinsert
