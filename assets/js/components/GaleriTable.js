@@ -18,13 +18,13 @@ export default defineComponent({
     },
     setup(props) {
         const localGalleries = ref(props.galleries);
+        const loading = ref(false);
         const error = ref(props.error); 
 
         watch(
             () => props.galleries,
             (newVal) => {
                 console.log('Galleries updated:', newVal);
-                // console.log('Galleries updated:', newVal); // Ditampilkan saat data berubah
                 localGalleries.value = newVal;
                 if (newVal.length === 0) {
                     error.value = 'Tidak ada data galeri.';
@@ -34,7 +34,6 @@ export default defineComponent({
             },
             { immediate: true } // Immediate untuk langsung trigger saat mounted
         );
-
 
         function editGallery(id) {
             // Implement edit functionality here
@@ -50,14 +49,17 @@ export default defineComponent({
             editGallery,
             deleteGallery,
             galleries: localGalleries,
-            loading: props.loading,
-            error: props.error
+            loading,
+            error
         };
     },
     template: `
         <div id="galeri-table">
-        <div v-if="!loading && !error && galleries.length === 0">Loading...</div>
-
+        <div v-if="loading">Loading..</div>
+                    <div v-else-if="error">{{ error }}</div>
+        <div v-else-if="!loading && galleries.length === 0">
+            Data galeri belum ada.
+        </div>
             <table class="gallery-table text-2xl font-semibold mb-4" v-if="!loading && !error && galleries.length > 0">
                 <thead>
                     <tr>
@@ -81,8 +83,6 @@ export default defineComponent({
                     </tr>
                 </tbody>
             </table>
-            
-            
         </div>
     `
 });

@@ -6,7 +6,7 @@
     </div>
     <div id="gallery-table" v-if="!isFormVisible">
         <galeri-table :galleries="galleries" :loading="loading" :error="error"></galeri-table>
-    </div>
+    </div v-if="!isFormVisible">
         <?php
             include '_form-galeri-photo.php';
         ?>
@@ -30,7 +30,6 @@
 
             const form = reactive({
                 'title': '',
-                // 'image': null,
                 'images': [],
                 'description': '',
                 'category': ''
@@ -52,18 +51,20 @@
                     const response = await axios.get('/belajar-web-native/services/galeri.php');
                     const result = await response.data;
                         
-                        setTimeout(() => {
+                    if (result.data && result.data.length > 0) {
                             galleries.value = result.data; // Set data galeri
-                            loading.value = false; // Sembunyikan loading setelah 2 detik
-                            console.log('Fetched galleries:', galleries.value); // 
-                    }, 2000); 
+                    } else {
+                        error.value = 'Data galeri belum ada.'; // Tampilkan pesan jika data kosong
+                    }
+                    loading.value = false; // Sembunyikan loading setelah mendapatkan data
+                    console.log('Fetched galleries:', galleries.value);
 
                 } catch (err) {
-                    loading.vaue = false;
+                    // loading.vaue = false;
                     error.value = 'Gagal mengambil data galeri.';
                     console.error(err);
                 } finally {
-                    loading.value = false;
+                    loading.value = false; // Pastikan loading disembunyikan di sini
                 }
             }
 
@@ -81,10 +82,6 @@
                 if (!form.description) errors.description = 'Description is required.';
                 if (!form.category) errors.category = 'Category is required.';
 
-                // if (!form.image) errors.image = 'Image is required.';
-                // else if (!['image/jpeg', 'image/png'].includes(form.image.type)) {
-                //     errors.image = 'Invalid file type. Please upload JPEG or PNG images.';
-                // }
                 if (!form.images || form.images.length === 0) {
                     errors.image = 'At least one image is required.';
                 } else {
@@ -94,22 +91,19 @@
                         }
                     });
                 }
-
                 if (Object.values(errors).some(error => error)) return; 
 
                 // Siapkan FormData
                 const formData = new FormData();
                 formData.append('action', 'store'); 
                 formData.append('title', form.title);
-                // formData.append('image', form.image);
                 formData.append('description', form.description);
                 formData.append('category', form.category);
 
                 form.images.forEach((image, index) => {
-                    formData.append(`images[${index}]`, image); // Gunakan notasi array untuk penamaan
+                    formData.append(`images[${index}]`, image); 
                 });
 
-                // console.log(formData);
                 try {
                     const response = await axios.post('/belajar-web-native/services/galeri.php', 
                         formData, {
@@ -124,15 +118,9 @@
                             // Jika ada error, tampilkan error ke masing-masing input
                             Object.keys(form).forEach(key => form[key] = key === 'images' ? [] : '');
                             isFormVisible.value = false;
-                            // Object.entries(result.errors).forEach(([key, message]) => {
-                            //     errors[key] = message;
-                            // });
                         } else {
-                            // Reset form dan sembunyikan form jika berhasil
                             Object.keys(form).forEach(key => form[key] = '');
                             isFormVisible.value = false;
-                            
-                            // Refresh data galeri setelah berhasil menyimpan
                             await fetchGalleries(); 
                         }
                 } catch (err) {
@@ -141,6 +129,50 @@
             }
             // function untuk cancel storeForm
             function cancelStoreForm() {
+                let emptyFields = []; // Array untuk menyimpan field yang kosong
+
+                if (form.title === "") {
+                    emptyFields.push('Title');
+                }
+
+                if (form.description === "") {
+                    emptyFields.push('Description');
+                }
+
+                if (form.category === "") {
+                    emptyFields.push('Category');
+                }
+
+                if (form.images.length === 0) {
+                    emptyFields.push('Images');
+                }
+
+                // Jika semua field kosong
+                if (emptyFields.length === 4) { 
+                    isFormVisible.value = false;
+                return;
+                }
+                else if (emptyFields.length > 0) {
+                    if (confirm('Yakin ingin membatalkan?')) {
+                        isFormVisible.value = false; 
+                        form.title = ""
+                        form.description = ""
+                        form.category = ""
+                        form.images = []
+                    }
+                }
+                else {
+                    if (confirm('Yakin ingin membatalkan?')) {
+                        isFormVisible.value = false; 
+                        form.title = ""
+                        form.description = ""
+                        form.category = ""
+                        form.images = []
+                    }
+                }
+            }
+
+            function showGalery() {
 
             }
 
@@ -166,6 +198,7 @@
                 isFormVisible,
                 cancelStoreForm,
                 submitForm,
+                showGalery,
             };
         }
     }).mount('#app-galery');

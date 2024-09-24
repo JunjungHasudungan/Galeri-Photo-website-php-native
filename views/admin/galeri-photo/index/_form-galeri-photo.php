@@ -9,29 +9,27 @@
         enctype="multipart/form-data">
     <input type="hidden" name="action" value="store">
     <div class="custom-form-group">
-        <label for="title">Title:</label>
+        <label for="title">Judul Album</label>
         <input v-model="form.title" type="text" id="title">
         <span class="custom-error-message" id="title-error">{{ errors.title }}</span>
     </div>
 
     <div class="custom-form-group">
-        <label for="image">Images:</label>
-        <!-- <input type="file" id="image"  @change="handleFileChange"> -->
+        <label for="image">Gambar</label>
         <input type="file" id="image"  @change="handleFileChange" multiple>
         <span class="custom-error-message" id="image-error">{{ errors.image }}</span>
     </div>
 
     <div class="custom-form-group">
-        <label for="description">Description:</label>
+        <label for="description">Keterangan</label>
         <textarea v-model="form.description" id="description" name="description"></textarea>
         <span class="custom-error-message" id="description-error">{{ errors.description }}</span>
     </div>
 
     <div class="custom-form-group">
-        <label for="category">Category:</label>
+        <label for="category">Kaegori</label>
         <select v-model="form.category" id="category" name="category">
             <?php foreach(CATEGORIES as $key => $category): ?>
-                <!-- <option value="<?php echo $key;?>"> <?php echo htmlspecialchars($category)?> </option> -->
                 <option value="<?php echo htmlspecialchars($key); ?>" 
                     <?php echo ($key === array_key_first(CATEGORIES)) ? 'selected' : ''; ?>>
                     <?php echo htmlspecialchars($category); ?>
