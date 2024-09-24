@@ -20,6 +20,8 @@ export default defineComponent({
         const localGalleries = ref(props.galleries);
         const loading = ref(false);
         const error = ref(props.error); 
+        const isGalleryDetailVisible = ref(false); 
+        const selectAlbum = ref(null);
 
         watch(
             () => props.galleries,
@@ -45,10 +47,18 @@ export default defineComponent({
             console.log(`Delete gallery with ID: ${id}`);
         }
 
+        function viewAlbum(gallery) {
+            selectAlbum.value = gallery;
+            isGalleryDetailVisible.value = true;
+            console.log(gallery);
+        }
+
         return {
             editGallery,
             deleteGallery,
+            viewAlbum,
             galleries: localGalleries,
+            isGalleryDetailVisible,
             loading,
             error
         };
@@ -77,6 +87,7 @@ export default defineComponent({
                         <td>{{ gallery.description }}</td>
                         <td>{{ gallery.category }}</td>
                         <td>
+                            <button @click="viewAlbum(gallery)" class="btn-edit">View</button>
                             <button @click="editGallery(gallery.id)" class="btn-edit">Edit</button>
                             <button @click="deleteGallery(gallery.id)" class="btn-delete">Delete</button>
                         </td>

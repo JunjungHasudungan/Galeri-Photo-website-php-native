@@ -40,6 +40,7 @@ function getAllPost() {
             posts.title AS post_title, 
             posts.description AS post_description, 
             posts.category AS post_category, 
+            posts.slug AS post_slug,
             images.id AS image_id, 
             images.folder_name AS image_folder_name, 
             images.title AS image_title
@@ -61,6 +62,7 @@ foreach ($rows as $row) {
             'title' => $row['post_title'],
             'description' => $row['post_description'],
             'category' => $row['post_category'],
+            'slug'      => $row['post_slug'],
             'images' => []
         ];
     }
@@ -103,7 +105,7 @@ function storePost($title, $category, $description, $imageFiles) {
         $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug); 
         $slug = preg_replace('/-+/', '-', $slug); 
         $slug = trim($slug, '-'); 
-        $resultSlug = substr($slug, 0, 20);
+        $resultSlug = substr($slug, 0, 20) . '...';
 
         // Insert ke tabel posts
         $stmt = $pdo->prepare("INSERT INTO posts (title, category, description, slug) VALUES (:title, :category, :description, :slug)");

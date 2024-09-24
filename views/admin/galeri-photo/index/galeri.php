@@ -4,21 +4,31 @@
         <p>Welcome to your dashboard. Here is where you can manage your settings, view notifications, and more.</p>
         <button id="btn-add-gallery" @click="showForm" class="btn-add">Tambah Galeri</button>
     </div>
-    <div id="gallery-table" v-if="!isFormVisible">
+    <div id="gallery-table" v-if="!isFormVisible || !isGalleryDetailVisible">
         <galeri-table :galleries="galleries" :loading="loading" :error="error"></galeri-table>
-    </div v-if="!isFormVisible">
-        <?php
-            include '_form-galeri-photo.php';
-        ?>
-</div>
+    </div>
+        <div v-if="!isFormVisible || !isGalleryDetailVisible">
+            <?php
+                include '_form-galeri-photo.php';
+            ?>
+        </div>
+
+        <!-- start card for detail album -->
+         <div v-if="isGalleryDetailVisible">
+            <galeri-detail></galeri-detail>
+         </div>
+        <!-- end card for detail album  -->
+    </div>
 
 <!-- script untuk vue js -->
 <script type="module">
     import { createApp, ref, onMounted, reactive } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
     import GaleriTable from '/belajar-web-native/assets/js/components/GaleriTable.js';
+    import GaleriDetail from '/belajar-web-native/assets/js/components/GaleriDetail.js';
     createApp({
         components: {
-                GaleriTable
+                GaleriTable, 
+                GaleriDetail,
             },
         setup() {
             const galleries = ref([]);
@@ -26,6 +36,7 @@
             const error = ref('');
             const loading = ref(false);
             const isOpen = ref(true);
+            const isGalleryDetailVisible = ref(false) // untuk menghandle visible galeri detail
             const isFormVisible = ref(false);
 
             const form = reactive({
@@ -196,6 +207,7 @@
                 form,
                 handleFileChange,
                 isFormVisible,
+                isGalleryDetailVisible,
                 cancelStoreForm,
                 submitForm,
                 showGalery,
