@@ -18,7 +18,7 @@ export default defineComponent({
     },
     setup(props) {
         const localGalleries = ref(props.galleries);
-        const isDetail = ref(false);
+        const isDetail = ref(props.isDetail);
         const error = ref(props.error); 
 
         watch(

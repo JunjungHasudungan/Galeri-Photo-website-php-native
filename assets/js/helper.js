@@ -87,7 +87,7 @@ $(document).ready(function() {
         let hasError = false;
 
         if (username === '') {
-            $('#usernameError').text('Username is required.');
+            $('#usernameError').text('Username is wa.');
             hasError = true;
         }
 

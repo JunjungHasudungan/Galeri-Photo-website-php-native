@@ -55,8 +55,9 @@ if (session_status() === PHP_SESSION_NONE) {
     </nav>
 
 
-<script>
-    const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
+<script type="module">
+     const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
+    // import { createApp, ref, onMounted, onBeforeUnmount } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
     createApp({
         setup() {
